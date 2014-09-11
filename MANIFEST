@@ -4,9 +4,8 @@ LICENSE
 META.json
 README.md
 cpanfile
-eg/5,
-eg/kosoku.pl
 lib/WWW/Kosoku/API.pm
+ls
 minil.toml
 t/00_compile.t
 t/01_kosoku.t

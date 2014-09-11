@@ -13,44 +13,44 @@ use Data::Dumper;
 }
 $Data::Dumper::Useperl = 1;
 
-is($kosoku->response->{CarType},'普通車');
-is($kosoku->response->{SortBy},'距離');
-is($kosoku->response->{Status},'End');
-
-subtest 'Routes' => sub{
- my $route = $kosoku->response->{Routes}->{Route};
- is($route->[2]->{RouteNo},2);
+subtest 'Result' => sub{
+  is($kosoku->{c},'普通車');
+  is($kosoku->{sortBy},'距離');
+  is($kosoku->{f},'渋谷');
+  is($kosoku->{t},'浜松');
 };
+
+subtest 'RouteNo' => sub{
+  is($kosoku->get_route_count,20);
+};
+
 
 subtest 'Summary' => sub{
-   is($kosoku->response->{Routes}->{Route}->[1]->{Summary}->{TotalLength},279.2);
-   is($kosoku->response->{Routes}->{Route}->[1]->{Summary}->{TotalToll},6000);
-   is($kosoku->response->{Routes}->{Route}->[1]->{Summary}->{TotalTime},200);
+  my $route1_summary = $kosoku->get_summary_by_routenumber(1);
+  is($route1_summary->{TotalLength},279.2);
+  is($route1_summary->{TotalToll},6000);
+  is($route1_summary->{TotalTime},200);
 };
 
-subtest "Tolls" => sub{
-  my $route = $kosoku->response;  
-  is($route->{Routes}->{Route}->[0]->{Details}->{No},3);
-  is($route->{Routes}->{Route}->[0]->{Details}->{Section}->[0]->{Length},38.1);
-  is($route->{Routes}->{Route}->[0]->{Details}->{Section}->[0]->{From},'渋谷');
-  is($route->{Routes}->{Route}->[0]->{Details}->{Section}->[0]->{To},'保土ヶ谷');
-  is($route->{Routes}->{Route}->[0]->{Details}->{Section}->[0]->{Order},0);
-  is($route->{Routes}->{Route}->[0]->{Details}->{Section}->[0]->{Time},41);
-  is($route->{Routes}->{Route}->[0]->{Details}->{Section}->[0]->{Tolls}->{No},2);
-  is_deeply $route->{Routes}->{Route}->[0]->{Details}->{Section}->[0]->{Tolls}->{Toll},[
-                                     '930円 通常料金',
-                                     '930円 ETC料金'  
-  ];
-  is_deeply $route->{Routes}->{Route}->[0]->{Details}->{Section}->[0]->{SubSections}->{SubSection}->[0],{            
-            'Length' => '3.8',
-            'Time' => 4,
-            'Road' => '首都高速３号渋谷線',
-            'To' => '谷町ＪＣＴ',
-            'From' => '渋谷'
-     };
+subtest 'Details' => sub{
+ is($kosoku->get_section_no_by_routenumber(1),3);
 };
 
+subtest 'Section' => sub{
+  my $section = $kosoku->get_section_by_routenumber(1);
+  #is($section->[0]->{From},'渋谷');
+  #is($section->[0]->{To},'狩場');
+  is($section->[0]->{Length},'53.2');
+  is($section->[0]->{Order},'3');
+  is($section->[0]->{Time},'52');
+  is($section->[0]->{Tolls}->{No},2);
+  #is($section->[0]->{Tolls}->{Toll}->[0],'930円 通常料金');
+  #is($section->[0]->{Tolls}->{Toll}->[1],'930円 ETC料金');
+};
 
+subtest 'SubSections' => sub{
+  my $first_subsection =  $kosoku->get_subsection_by_routenumber_and_sectionnumber(1,0);
+  isa_ok $first_subsection,'ARRAY';
+};
 
 done_testing;
-

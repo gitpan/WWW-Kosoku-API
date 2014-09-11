@@ -9,7 +9,7 @@ use Furl;
 use XML::Simple;
 use Carp;
 
-our $VERSION = "0.02";
+our $VERSION = "0.03";
 
 use constant BASE_URL => 'http://kosoku.jp/api/route.php?';
 
@@ -48,6 +48,7 @@ sub response{
 
 use Data::Dumper;
 
+#routenumber and subsections
 sub get_subsection{
  my $self = shift;
  my $subsection = [];
@@ -60,14 +61,111 @@ sub get_subsection{
   return $subsection;
 }
 
-sub get_section{
+# section_count in routenumber
+sub get_section_no_by_routenumber{
+ my ($self,$routenumber) = @_;
+ my $ref = $self->response;
+ return $ref->{Routes}->{Route}->[$routenumber]->{Details}->{No};
+}
+
+sub get_section_info_by_routenumber_sectionnumber{
+ my($self,$routenumber,$sectionno) = @_;
+ if($routenumber < 0 ||  $self->get_route_count <= $routenumber){
+   croak("no routenumber:$routenumber");
+ }
+ if($sectionno < 0 || $sectionno >= $self->get_section_no_by_routenumber){
+   croak("no section_no_number:$sectionno");
+ }
+ my $ref = $self->response;
+ return $ref->{Routes}->{Route}->[$routenumber]->{Details}->{Section}->[$sectionno];
+}
+
+#get subsection by routenumber and sectionnumber
+sub get_subsection_by_routenumber_and_sectionnumber{
+ my($self,$routenumber,$sectionnumber) = @_;
+ if($routenumber < 0 ||  $self->get_route_count <= $routenumber){
+   croak("no routenumber:$routenumber");
+ }
+ if($sectionnumber < 0 || $sectionnumber >= $self->get_section_no_by_routenumber){
+   croak("no section_no_number:$sectionnumber");
+ }
+ my $ref = $self->response;
+ return $ref->{Routes}->{Route}->[$routenumber]->{Details}->{Section}->[$sectionnumber]->{SubSections}->{SubSection};
+}
+
+#get section info by routenumber
+sub get_section_by_routenumber{
+ my($self,$routenumber) = @_;
+ if($routenumber < 0 ||  $self->get_route_count <= $routenumber){
+   croak("no routenumber:$routenumber");
+ }
+ my $ref = $self->response;
+ return $ref->{Routes}->{Route}->[$routenumber]->{Details}->{Section};
+}
+
+#get section toll by routenumber and sectionnumber
+sub get_section_tolls_by_routenumber_and_sectionnumber{
+ my($self,$routenumber,$sectionnumber) = @_;
+ my $section_info = $self->get_section_info_by_routenumber_sectionnumber($routenumber,$sectionnumber);
+ return $section_info->{Tolls}->{Toll};
+}
+
+#get time and toll and legnth by routenumber
+sub get_summary_by_routenumber{
+ my($self,$routenumber) = @_;
+ my $ref = $self->response;
+ return $ref->{Routes}->{Route}->[$routenumber]->{Summary};
+}
+
+#get route count
+sub get_route_count{
  my $self = shift;
  my $ref = $self->response;
- my @Details = @{$ref->{Routes}->{Route}->[1]->{Details}->{Section}};
- return @Details;
+ scalar @{$ref->{Routes}->{Route}};
+}
+
+# get subsectionsinfo by routenumber
+sub get_subsections_by_routenumber{
+ my ($self,$routenumber) = @_;
+ if($routenumber < 0 || $routenumber >= $self->get_route_count){
+   croak("no route number:$routenumber");
+ }
+ my $subsection = $self->get_subsection;
+ my $sub_list = [];
+ for my $sub (@{$subsection}){
+  if(defined $sub->{$routenumber}){
+   if(ref $sub->{$routenumber} eq 'ARRAY'){
+     for my $subsec(@{$sub->{$routenumber}}){
+       push @$sub_list,$subsec;
+     }
+   }elsif(ref $sub->{$routenumber} eq 'HASH'){
+       push @$sub_list,$sub->{$routenumber};
+   }
+  }
+ }
+ return $sub_list;
+}
+
+sub get_subsections_and_sectioncount_by_routenumber{
+ my($self,$routenumber) = @_;
+ my $subsection = [];
+ my $subsection_info = $self->get_subsection;
+ my $sectioncount = 0;
+ for my $key(@{$subsection_info}){
+   if(defined $key->{$routenumber}){
+     if(ref $key->{$routenumber} eq 'ARRAY'){
+      push @$subsection,@{$key->{$routenumber}};
+    }elsif(ref $key->{$routenumber} eq 'HASH'){
+      push @$subsection,$key->{$routenumber};
+    }
+    $sectioncount++;
+   }
+ }
+ return $sectioncount;
 }
 
 1;
+
 
 __END__
 
@@ -75,15 +173,27 @@ __END__
 
 =head1 NAME
 
-WWW::Kosoku::API - It's new $module
+WWW::Kosoku::API - Kosoku WebService API
 
 =head1 SYNOPSIS
-
     use WWW::Kosoku::API;
+
+    my $kosoku = WWW::Kosoku::API->new(f => '渋谷',t => '浜松',c => '普通車');
+
+    print $kosoku->{c} #=> 普通車
+    print $kosoku->get_route_count #=> 20
+
+    for my $subsection(@{$kosoku->get_subsection_by_routenumber_and_sectionnumber(1,0)}){
+         print $subsection->{Length};
+         print $subsection->{Time};
+         print $subsection->{Road};
+         print $subsection->{To};
+         print $subsection->{From}; 
+    }
 
 =head1 DESCRIPTION
 
-WWW::Kosoku::API is ...
+WWW::Kosoku::API is Kosoku WebService API.
 
 =head1 LICENSE
 

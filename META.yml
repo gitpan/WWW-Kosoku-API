@@ -1,5 +1,5 @@
 ---
-abstract: "It's new $module"
+abstract: 'Kosoku WebService API'
 author:
   - 'sue7ga <sue77ga@gmail.com>'
 build_requires:
@@ -28,11 +28,11 @@ no_index:
 provides:
   WWW::Kosoku::API:
     file: lib/WWW/Kosoku/API.pm
-    version: 0.02
+    version: 0.03
 requires:
   perl: 5.008005
 resources:
   bugtracker: https://github.com/sue7ga/WWW-Kosoku-API/issues
   homepage: https://github.com/sue7ga/WWW-Kosoku-API
   repository: git://github.com/sue7ga/WWW-Kosoku-API.git
-version: 0.02
+version: 0.03

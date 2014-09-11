@@ -1,5 +1,5 @@
 {
-   "abstract" : "It's new $module",
+   "abstract" : "Kosoku WebService API",
    "author" : [
       "sue7ga <sue77ga@gmail.com>"
    ],
@@ -55,7 +55,7 @@
    "provides" : {
       "WWW::Kosoku::API" : {
          "file" : "lib/WWW/Kosoku/API.pm",
-         "version" : "0.02"
+         "version" : "0.03"
       }
    },
    "release_status" : "stable",
@@ -69,5 +69,5 @@
          "web" : "https://github.com/sue7ga/WWW-Kosoku-API"
       }
    },
-   "version" : "0.02"
+   "version" : "0.03"
 }
