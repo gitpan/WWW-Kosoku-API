@@ -9,7 +9,7 @@ use Furl;
 use XML::Simple;
 use Carp;
 
-our $VERSION = "0.01";
+our $VERSION = "0.02";
 
 use constant BASE_URL => 'http://kosoku.jp/api/route.php?';
 
@@ -44,6 +44,20 @@ sub response{
    croak("Oh! faild reading XML");
  }
  return $ref;
+}
+
+use Data::Dumper;
+
+sub get_subsection{
+ my $self = shift;
+ my $subsection = [];
+ my $ref = $self->response;
+ for my $route(@{$ref->{Routes}->{Route}}){
+    for my $sec(@{$route->{Details}->{Section}}){
+       push @{$subsection},{$route->{RouteNo},$sec->{SubSections}->{SubSection}};
+    }
+ }
+  return $subsection;
 }
 
 sub get_section{
