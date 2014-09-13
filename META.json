@@ -43,6 +43,7 @@
       },
       "runtime" : {
          "requires" : {
+            "WWW::Kosoku::API" : "0.03",
             "perl" : "5.008005"
          }
       },
@@ -55,7 +56,7 @@
    "provides" : {
       "WWW::Kosoku::API" : {
          "file" : "lib/WWW/Kosoku/API.pm",
-         "version" : "0.03"
+         "version" : "0.04"
       }
    },
    "release_status" : "stable",
@@ -69,5 +70,5 @@
          "web" : "https://github.com/sue7ga/WWW-Kosoku-API"
       }
    },
-   "version" : "0.03"
+   "version" : "0.04"
 }

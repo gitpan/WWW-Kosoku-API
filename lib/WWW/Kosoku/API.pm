@@ -9,7 +9,7 @@ use Furl;
 use XML::Simple;
 use Carp;
 
-our $VERSION = "0.03";
+our $VERSION = "0.04";
 
 use constant BASE_URL => 'http://kosoku.jp/api/route.php?';
 
@@ -115,6 +115,15 @@ sub get_summary_by_routenumber{
  my($self,$routenumber) = @_;
  my $ref = $self->response;
  return $ref->{Routes}->{Route}->[$routenumber]->{Summary};
+}
+
+sub get_all_summary{
+ my $self = shift;
+ my $summary_list = [];
+ for my $count(0..$self->get_route_count-1){
+    push @$summary_list,$self->get_summary_by_routenumber($count);
+ }
+ return $summary_list;
 }
 
 #get route count
