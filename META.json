@@ -56,7 +56,7 @@
    "provides" : {
       "WWW::Kosoku::API" : {
          "file" : "lib/WWW/Kosoku/API.pm",
-         "version" : "0.05"
+         "version" : "0.06"
       }
    },
    "release_status" : "stable",
@@ -70,5 +70,5 @@
          "web" : "https://github.com/sue7ga/WWW-Kosoku-API"
       }
    },
-   "version" : "0.05"
+   "version" : "0.06"
 }

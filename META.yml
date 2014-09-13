@@ -28,7 +28,7 @@ no_index:
 provides:
   WWW::Kosoku::API:
     file: lib/WWW/Kosoku/API.pm
-    version: 0.05
+    version: 0.06
 requires:
   WWW::Kosoku::API: 0.03
   perl: 5.008005
@@ -36,4 +36,4 @@ resources:
   bugtracker: https://github.com/sue7ga/WWW-Kosoku-API/issues
   homepage: https://github.com/sue7ga/WWW-Kosoku-API
   repository: git://github.com/sue7ga/WWW-Kosoku-API.git
-version: 0.05
+version: 0.06
