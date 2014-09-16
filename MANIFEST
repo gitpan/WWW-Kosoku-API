@@ -5,10 +5,8 @@ META.json
 README.md
 cpanfile
 lib/WWW/Kosoku/API.pm
-ls
 minil.toml
 t/00_compile.t
 t/01_kosoku.t
-t/02_kosoku.t
 META.yml
 MANIFEST
